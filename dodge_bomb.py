@@ -57,11 +57,11 @@ def main():
         key_lst = pg.key.get_pressed()  #  キーの押下状態のリストを修得
         for k, mv in delta.items():  #  辞書の値を代入
             if key_lst[k]:  #  指定されているキーが押されたとき
-                kk_rect.move_ip(mv)
-        if check_bound(screen.get_rect(), kk_rect) != (True, True):
+                kk_rect.move_ip(mv)  #  こうかとんの座礁を変更する
+        if check_bound(screen.get_rect(), kk_rect) != (True, True):  #  画面外のとき
             for k, mv in delta.items():
                 if key_lst[k]:
-                    kk_rect.move_ip(-mv[0], -mv[1])
+                    kk_rect.move_ip(-mv[0], -mv[1])  #  
         screen.blit(bg_img, [0, 0])
         screen.blit(kk_img, kk_rect)
         bb_rect.move_ip(vx, vy)
@@ -71,6 +71,9 @@ def main():
         if not tate:
             vy*= -1
         screen.blit(bb_img, bb_rect)
+
+        if kk_rect.colliderect(bb_rect):
+            return
 
 
         pg.display.update()
