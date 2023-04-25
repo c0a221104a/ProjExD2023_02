@@ -34,8 +34,11 @@ def main():
     screen = pg.display.set_mode((1600, 900))
     clock = pg.time.Clock()
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
+    bg_imgs = pg.transform.flip(bg_img, True, False)
     kk_img = pg.image.load("ex02/fig/3.png")
+    kk_img2 = pg.image.load("ex02/fig/6.png")
     kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
+    kk_img2 = pg.transform.rotozoom(kk_img2, 0, 2.0)
     bb_img = pg.Surface((20,20))
     pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)  #  赤い円を描く
     bb_img.set_colorkey((0, 0, 0))  #  黒い部分を削除する
@@ -47,6 +50,9 @@ def main():
     kk_rect = kk_img.get_rect()
     kk_rect.center = 900, 400  #初期座標の設定
     tmr = 0
+    over = True
+    fast = 0
+    gg = 0
 
     while True:
         for event in pg.event.get():
@@ -63,21 +69,33 @@ def main():
             for k, mv in delta.items():
                 if key_lst[k]:
                     kk_rect.move_ip(-mv[0], -mv[1])  #  こうかとんの移動を逆にする
-        screen.blit(bg_img, [0, 0])
-        screen.blit(kk_img, kk_rect)
-        avx, avy = vx*accs[min(tmr//100000, 9)], vy*accs[min(tmr//1000000, 9)]
+        if tmr == 3200:
+            tmr = 0
+        if tmr % 100 >= 50:
+            fast = 0
+        else:
+            fast = 1
+        tmr += 1
+        screen.blit(bg_img, [0-tmr, 0])
+        screen.blit(bg_imgs, [1600-tmr, 0])
+        screen.blit(bg_img, [3200-tmr, 0])
+
+        if over == True:
+            screen.blit(kk_img, kk_rect)
+        avx, avy = vx*accs[min(tmr//500, 9)], vy*accs[min(tmr//500, 9)] #tmrが増えていくにつれてaccsのリストから段階的に変化させる
         bb_rect.move_ip(avx, avy)
-        yoko, tate = check_bound(screen.get_rect(), bb_rect) #check_bound関数を呼び出
+        yoko, tate = check_bound(screen.get_rect(), bb_rect) #check_bound関数を呼び出す
         if not yoko:  #  yoko = Falseの時
             vx*= -1  #  vxを反転
         if not tate:  #  tate = Falseのとき
             vy*= -1  #  vyを反転
-        screen.blit(bb_img, bb_rect)
+        if over == True:
+            screen.blit(bb_img, bb_rect)
 
         if kk_rect.colliderect(bb_rect): #練習６
-            bg_img = pg.image.load("ex05/fig/pg_bg.jpg")
-            
-
+            over = False
+            for i in range(50):
+                screen.blit(kk_img2, kk_rect)
 
         pg.display.update()
         clock.tick(1000)
