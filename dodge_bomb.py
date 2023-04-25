@@ -93,7 +93,9 @@ def main():
             screen.blit(bb_img, bb_rect)
 
         if kk_rect.colliderect(bb_rect): #練習６
-            return
+            over = False
+            for i in range(50):
+                screen.blit(kk_img2, kk_rect)
 
         pg.display.update()
         clock.tick(1000)
