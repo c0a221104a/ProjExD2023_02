@@ -11,6 +11,7 @@ delta = {
 
 }
 
+accs = [a for a in range(1, 11)]
 
 def check_bound(scr_rct: pg.Rect, obj_rct: pg.Rect) -> tuple[bool, bool]:
     """
@@ -61,19 +62,21 @@ def main():
         if check_bound(screen.get_rect(), kk_rect) != (True, True):  #  画面外のとき
             for k, mv in delta.items():
                 if key_lst[k]:
-                    kk_rect.move_ip(-mv[0], -mv[1])  #  
+                    kk_rect.move_ip(-mv[0], -mv[1])  #  こうかとんの移動を逆にする
         screen.blit(bg_img, [0, 0])
         screen.blit(kk_img, kk_rect)
-        bb_rect.move_ip(vx, vy)
-        yoko, tate = check_bound(screen.get_rect(), bb_rect)
-        if not yoko:
-            vx*= -1
-        if not tate:
-            vy*= -1
+        avx, avy = vx*accs[min(tmr//100000, 9)], vy*accs[min(tmr//1000000, 9)]
+        bb_rect.move_ip(avx, avy)
+        yoko, tate = check_bound(screen.get_rect(), bb_rect) #check_bound関数を呼び出
+        if not yoko:  #  yoko = Falseの時
+            vx*= -1  #  vxを反転
+        if not tate:  #  tate = Falseのとき
+            vy*= -1  #  vyを反転
         screen.blit(bb_img, bb_rect)
 
-        if kk_rect.colliderect(bb_rect):
-            return
+        if kk_rect.colliderect(bb_rect): #練習６
+            bg_img = pg.image.load("ex05/fig/pg_bg.jpg")
+            
 
 
         pg.display.update()
